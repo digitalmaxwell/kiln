@@ -1,0 +1,6 @@
+{"time": "2026-11-27T18:00:09-05:00", "step": "brief", "output": "Loaded brief 'Sample day (pipeline test)' from sample-brief.json", "agent": "Forge", "input": "sample-brief.json"}
+{"time": "2026-11-27T18:00:09-05:00", "step": "sources", "output": "Recorded 2 source(s) with title, url, license, and type", "agent": "Forge", "input": "sample-brief.json"}
+{"time": "2026-11-27T18:00:09-05:00", "step": "design", "output": "No approved designer spec yet. Wrote a bare semantic placeholder marked 'awaiting designer spec'.", "agent": "Product Designer", "input": "none — awaiting designer spec"}
+{"time": "2026-11-27T18:00:09-05:00", "step": "build", "output": "Wrote sites/2026-11-27/index.html (unstyled placeholder) and refreshed the How this was made panel from attribution.json.", "agent": "Forge", "output_path": "sites/2026-11-27/index.html"}
+{"time": "2026-11-27T18:00:09-05:00", "step": "qa", "output": "QA passed: attribution.json matches the schema, no broken local links, basic a11y checks passed, folder size 7349 bytes.", "agent": "Forge"}
+{"time": "2026-11-27T18:00:09-05:00", "step": "publish", "output": "Local only: sites/2026-11-27/index.html is ready. Nothing was deployed or pushed.", "agent": "Forge"}
