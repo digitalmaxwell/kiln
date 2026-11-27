@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.kiln/schema/attribution.schema.json",
+  "title": "Kiln attribution.json",
+  "description": "Derived per-site output for the How this was made panel, build notes, and graph. Core shape is the Product Designer's: sources[title,url,license,type], agents[name,role], steps[time,step,output]. Additional properties listed below are optional Forge suggestions and may be omitted.",
+  "type": "object",
+  "required": ["sources", "agents", "steps"],
+  "additionalProperties": true,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "description": "Optional suggestion. Semver of this shape, so readers can evolve safely."
+    },
+    "site": {
+      "type": "object",
+      "description": "Optional suggestion. Identifies the day so the index, panel, and graph do not have to infer it from the folder name.",
+      "properties": {
+        "date": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+        "slug": { "type": "string" },
+        "title": { "type": "string" }
+      },
+      "required": ["date"]
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["title", "url", "license", "type"],
+        "additionalProperties": true,
+        "properties": {
+          "title": { "type": "string", "minLength": 1 },
+          "url": { "type": "string", "minLength": 1 },
+          "license": { "type": "string", "minLength": 1 },
+          "type": { "type": "string", "minLength": 1 },
+          "used_for": {
+            "type": "string",
+            "description": "Optional suggestion. Short note on how this source was used."
+          }
+        }
+      }
+    },
+    "agents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "role"],
+        "additionalProperties": true,
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "role": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "steps": {
+      "type": "array",
+      "description": "Public timeline, in order: brief, sources, design, build, publish. Additional internal steps may appear in build-log.jsonl only.",
+      "items": {
+        "type": "object",
+        "required": ["time", "step", "output"],
+        "additionalProperties": true,
+        "properties": {
+          "time": {
+            "type": "string",
+            "description": "ISO 8601 timestamp with offset, e.g. 2026-11-27T17:30:00-05:00."
+          },
+          "step": { "type": "string", "minLength": 1 },
+          "output": { "type": "string" },
+          "agent": {
+            "type": "string",
+            "description": "Optional suggestion. Who performed this step."
+          }
+        }
+      }
+    }
+  }
+}

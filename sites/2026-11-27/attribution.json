@@ -1,0 +1,66 @@
+{
+  "schema_version": "0.1.0",
+  "site": {
+    "date": "2026-11-27",
+    "slug": "2026-11-27",
+    "title": "Sample day (pipeline test)"
+  },
+  "sources": [
+    {
+      "title": "MDN: HTML elements reference",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements",
+      "license": "CC-BY-SA 2.5",
+      "type": "documentation",
+      "used_for": "Semantic HTML structure for the unstyled placeholder"
+    },
+    {
+      "title": "Vercel Terms of Service",
+      "url": "https://vercel.com/legal/terms",
+      "license": "All rights reserved; cited as a terms reference only",
+      "type": "legal",
+      "used_for": "Hosting-terms check (Hobby plan is personal or non-commercial)"
+    }
+  ],
+  "agents": [
+    {
+      "name": "Product Designer",
+      "role": "Brand, design spec, and How this was made panel"
+    },
+    {
+      "name": "Forge",
+      "role": "Publishing pipeline, build, QA, and archive index"
+    }
+  ],
+  "steps": [
+    {
+      "time": "2026-11-27T18:00:09-05:00",
+      "step": "brief",
+      "output": "Loaded brief 'Sample day (pipeline test)' from sample-brief.json",
+      "agent": "Forge"
+    },
+    {
+      "time": "2026-11-27T18:00:09-05:00",
+      "step": "sources",
+      "output": "Recorded 2 source(s) with title, url, license, and type",
+      "agent": "Forge"
+    },
+    {
+      "time": "2026-11-27T18:00:09-05:00",
+      "step": "design",
+      "output": "No approved designer spec yet. Wrote a bare semantic placeholder marked 'awaiting designer spec'.",
+      "agent": "Product Designer"
+    },
+    {
+      "time": "2026-11-27T18:00:09-05:00",
+      "step": "build",
+      "output": "Wrote sites/2026-11-27/index.html (unstyled placeholder) and refreshed the How this was made panel from attribution.json.",
+      "agent": "Forge"
+    },
+    {
+      "time": "2026-11-27T18:00:09-05:00",
+      "step": "publish",
+      "output": "Local only: sites/2026-11-27/index.html is ready. Nothing was deployed or pushed.",
+      "agent": "Forge"
+    }
+  ]
+}

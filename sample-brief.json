@@ -1,0 +1,22 @@
+{
+  "date": "2026-11-27",
+  "title": "Sample day (pipeline test)",
+  "slug": "2026-11-27",
+  "summary": "A local-only placeholder used to test the Kiln generation pipeline. It is not a designed site.",
+  "sources": [
+    {
+      "title": "MDN: HTML elements reference",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements",
+      "license": "CC-BY-SA 2.5",
+      "type": "documentation",
+      "used_for": "Semantic HTML structure for the unstyled placeholder"
+    },
+    {
+      "title": "Vercel Terms of Service",
+      "url": "https://vercel.com/legal/terms",
+      "license": "All rights reserved; cited as a terms reference only",
+      "type": "legal",
+      "used_for": "Hosting-terms check (Hobby plan is personal or non-commercial)"
+    }
+  ]
+}

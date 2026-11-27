@@ -1,0 +1,98 @@
+# Daily Kiln build.
+#
+# Schedule is 13:00 UTC (cron: '0 13 * * *').
+# That is 8:00 AM America/New_York during EST.
+# During EDT, 13:00 UTC is 9:00 AM ET, not 8:00. 8:00 AM EDT would be 12:00 UTC.
+# DST drift is documented rather than handled with a second cron, to keep this workflow small.
+#
+# Deploy: a guarded Cloudflare Pages job is included but is a no-op until
+# CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID repo secrets exist.
+# It also skips when KILL_SWITCH is present at the repo root (owner: Maxwell).
+# This job never prints or commits secrets.
+# Going public at the host's free URL is approved; wiring stays inactive
+# until Maxwell connects a Cloudflare Pages project. Preferred path is
+# Cloudflare "Connect to Git" (no token). See README.
+
+name: Daily Kiln
+
+on:
+  schedule:
+    - cron: '0 13 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      kill_switch: ${{ steps.kill.outputs.present }}
+      deploy_ready: ${{ steps.creds.outputs.ready }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Check kill switch
+        id: kill
+        run: |
+          if [ -f KILL_SWITCH ]; then
+            echo "KILL_SWITCH is present. Owner: Maxwell. Build and QA will still run; publish/deploy will be skipped."
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "KILL_SWITCH is not present."
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run pipeline and QA
+        run: python3 run.py
+
+      - name: Upload built site
+        uses: actions/upload-artifact@v4
+        with:
+          name: kiln-site
+          path: |
+            index.html
+            sites/**
+            schema/attribution.schema.json
+
+      # Secret values are only tested for presence and are never printed.
+      - name: Check whether Cloudflare deploy secrets exist
+        id: creds
+        env:
+          CF_TOKEN_PRESENT: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT_PRESENT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -n "$CF_TOKEN_PRESENT" ] && [ -n "$CF_ACCOUNT_PRESENT" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "Cloudflare secrets are not set. The deploy job will be a no-op."
+          fi
+
+  # Guarded deploy. No-op without secrets or when KILL_SWITCH is present.
+  # Preferred alternative: Cloudflare Pages "Connect to Git" (no token in this repo).
+  deploy:
+    needs: build
+    if: needs.build.outputs.kill_switch != 'true' && needs.build.outputs.deploy_ready == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Download built site
+        uses: actions/download-artifact@v4
+        with:
+          name: kiln-site
+          path: site
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy site --project-name=kiln
