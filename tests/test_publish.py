@@ -36,6 +36,23 @@ class IndexCopyTest(unittest.TestCase):
         self.assertIn("<p>A website of websites. Published daily.</p>", text)
         self.assertNotIn("nothing has been published", text)
 
+    def test_committed_public_bundle_is_the_site_only(self):
+        public = ROOT / "public"
+        files = sorted(
+            p.relative_to(public).as_posix()
+            for p in public.rglob("*")
+            if p.is_file()
+        )
+        self.assertIn("index.html", files)
+        self.assertTrue(any(path.startswith("sites/") and path.endswith("/index.html") for path in files))
+        blob = "\n".join(files)
+        self.assertNotIn("run.py", blob)
+        self.assertNotIn(".github", blob)
+        self.assertNotIn("logs/", blob)
+        self.assertNotIn("/logs", blob)
+        index = (public / "index.html").read_text(encoding="utf-8")
+        self.assertIn("<p>A website of websites. Published daily.</p>", index)
+
 
 class PublicBundleTest(unittest.TestCase):
     def test_assemble_public_copies_site_output_only(self):

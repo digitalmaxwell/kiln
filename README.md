@@ -14,7 +14,7 @@ python3 run.py
 
 Optional: `python3 run.py --brief path/to/brief.json`
 
-This writes `sites/YYYY-MM-DD/index.html`, derives `attribution.json` from an append-only `build-log.jsonl`, writes a `build-note.md` draft (not for auto-publish), regenerates the archive `index.html`, and runs checks (schema, local links, basic a11y, size). When `KILL_SWITCH` is absent it also copies the publishable pages (`index.html` and `sites/`) into `public/` for the Worker. `public/` is generated and gitignored.
+This writes `sites/YYYY-MM-DD/index.html`, derives `attribution.json` from an append-only `build-log.jsonl`, writes a `build-note.md` draft (not for auto-publish), regenerates the archive `index.html`, and runs checks (schema, local links, basic a11y, size). When `KILL_SWITCH` is absent it also copies the publishable pages (`index.html` and `sites/`) into `public/` for the Worker.
 
 ## Kill switch
 
@@ -36,7 +36,7 @@ The workflow checks out the repo, sets up Python, honors the kill switch, runs `
 
 Production is an assets-only Worker named `kiln` on Workers Builds, production branch `main`, workers.dev host only. There is no custom domain and no secrets in this repo.
 
-`wrangler.jsonc` points `assets.directory` at `./public`. That directory is only `index.html` and `sites/` (the pages and the files they link to). `run.py`, `.github`, schema, and the rest of the repo are not in it, so they are not uploaded. Requests that do not match a file return 404 (`not_found_handling` is `none`). URLs stay `/` and `/sites/<date>/...`.
+`wrangler.jsonc` points `assets.directory` at `./public`. That directory is only `index.html` and `sites/` (the pages and the files they link to). `run.py`, `.github`, schema, and the rest of the repo are not in it, so they are not uploaded. `public/` is committed so the directory exists when a build starts; `build.command` refreshes it before upload. Requests that do not match a file return 404 (`not_found_handling` is `none`). URLs stay `/` and `/sites/<date>/...`.
 
 Dashboard deploy command: `npx wrangler deploy`
 
@@ -71,6 +71,6 @@ sites/YYYY-MM-DD/index.html
 sites/YYYY-MM-DD/attribution.json
 sites/YYYY-MM-DD/build-log.jsonl
 sites/YYYY-MM-DD/build-note.md
-public/                  generated; gitignored; the only directory Wrangler uploads
+public/                  publishable site only; the only directory Wrangler uploads
 .github/workflows/daily.yml
 ```

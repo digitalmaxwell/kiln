@@ -9,7 +9,4 @@ env/
 *.egg-info/
 .pytest_cache/
 .mypy_cache/
-
-# Generated Workers asset bundle (wrangler assets.directory). Not source.
-public/
 .wrangler/
