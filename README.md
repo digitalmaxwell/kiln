@@ -38,7 +38,7 @@ Production is an assets-only Worker named `kiln` on Workers Builds, production b
 
 `wrangler.jsonc` points `assets.directory` at `./public`. That directory is only `index.html` and `sites/` (the pages and the files they link to). `run.py`, `.github`, schema, and the rest of the repo are not in it, so they are not uploaded. `public/` is committed so the directory exists when a build starts; `build.command` refreshes it before upload. Requests that do not match a file return 404 (`not_found_handling` is `none`). URLs stay `/` and `/sites/<date>/...`.
 
-Dashboard deploy command: `npx wrangler deploy`
+Dashboard deploy command: `npx wrangler deploy`. `preview_urls` is on so a pull request can get a workers.dev preview. There is no custom domain.
 
 Wrangler runs this before upload (`build.command`):
 
