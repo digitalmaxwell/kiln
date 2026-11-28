@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import shutil
 import sys
 from datetime import datetime
 from html import escape
@@ -18,6 +19,7 @@ from zoneinfo import ZoneInfo
 ROOT = Path(__file__).resolve().parent
 SITES = ROOT / "sites"
 INDEX = ROOT / "index.html"
+PUBLIC = ROOT / "public"
 SCHEMA_PATH = ROOT / "schema" / "attribution.schema.json"
 KILL_SWITCH = ROOT / "KILL_SWITCH"
 ET = ZoneInfo("America/New_York")
@@ -244,7 +246,7 @@ def render_index(days: list[dict]) -> str:
   <p><strong>Awaiting designer spec.</strong> This is a bare, unstyled archive index, newest first. Visual design, layout, typography, color, and UX are owned by the Product Designer and are not invented here.</p>
   <header>
     <h1>Kiln</h1>
-    <p>A website of websites. Local prototype only — nothing has been published.</p>
+    <p>A website of websites. Published daily.</p>
   </header>
   <main>
     <ol reversed>
@@ -321,6 +323,23 @@ def regenerate_index() -> list[dict]:
     days.sort(key=lambda d: d["date"], reverse=True)
     INDEX.write_text(render_index(days), encoding="utf-8")
     return days
+
+
+def publish_blocked(root: Path) -> bool:
+    """True when KILL_SWITCH is present and a new public bundle must not be written."""
+    return (root / "KILL_SWITCH").is_file()
+
+
+def assemble_public(public: Path, index: Path, sites: Path) -> None:
+    """Copy the publishable archive into public/. Source, workflows, logs, and config stay out."""
+    if public.is_dir():
+        shutil.rmtree(public)
+    elif public.exists():
+        public.unlink()
+    public.mkdir(parents=True)
+    shutil.copy2(index, public / "index.html")
+    if sites.is_dir():
+        shutil.copytree(sites, public / "sites")
 
 
 # ---------------------------------------------------------------------------
@@ -558,6 +577,15 @@ def run(brief_path: Path) -> int:
     print(f"wrote: {day_dir / 'build-log.jsonl'}")
     print(f"wrote: {day_dir / 'build-note.md'}")
     print(f"wrote: {INDEX} ({len(days)} day(s))")
+    if publish_blocked(ROOT):
+        if PUBLIC.is_dir():
+            shutil.rmtree(PUBLIC)
+        elif PUBLIC.exists():
+            PUBLIC.unlink()
+        print("public: skipped (KILL_SWITCH is present)")
+    else:
+        assemble_public(PUBLIC, INDEX, SITES)
+        print(f"wrote: {PUBLIC / 'index.html'}")
     return 0
 
 

@@ -1,0 +1,12 @@
+{
+  "name": "kiln",
+  "compatibility_date": "2026-11-28",
+  "preview_urls": true,
+  "assets": {
+    "directory": "./public",
+    "not_found_handling": "none"
+  },
+  "build": {
+    "command": "sh scripts/cloudflare-build.sh"
+  }
+}
