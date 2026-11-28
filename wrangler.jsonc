@@ -1,7 +1,7 @@
 {
-  // Assets-only Worker. No main script. Workers Builds deploy command stays `npx wrangler deploy`.
   "name": "kiln",
   "compatibility_date": "2026-11-28",
+  "preview_urls": true,
   "assets": {
     "directory": "./public",
     "not_found_handling": "none"
